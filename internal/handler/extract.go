@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/blog-log/extractor/pkg/api/v1/extract"
@@ -10,25 +9,35 @@ import (
 
 func (h *ExtractHandler) Extract(w http.ResponseWriter, r *http.Request) {
 	// extract request
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-
 	var request extract.Request
-	if err := json.Unmarshal(reqBody, &request); err != nil {
-		http.Error(w, err.Error(), 500)
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		respondWithError(w, err.Error(), 500)
 		return
 	}
+	defer r.Body.Close()
 
 	// do actual work
 	repo, err := h.extractor(r.Context(), request.Repo)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		respondWithError(w, err.Error(), 500)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(repo)
+	if err := json.NewEncoder(w).Encode(repo); err != nil {
+		respondWithError(w, err.Error(), 500)
+		return
+	}
+}
+
+func respondWithError(w http.ResponseWriter, message string, code int) {
+	respondWithJSON(w, code, map[string][]string{"error": {message}})
+}
+
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }
