@@ -1,6 +1,10 @@
 package adapter
 
-import "github.com/blog-log/extractor/internal/model"
+import (
+	"fmt"
+
+	"github.com/blog-log/extractor/internal/model"
+)
 
 type RepoAdapter func(repo string, files []*model.File) *model.Repo
 
@@ -18,6 +22,16 @@ func GitRepoAdapter(repo string, files []*model.File) *model.Repo {
 		Branch: "main",
 		Data:   docs,
 	}
+
+	// if data is empty, add warning
+	if data.Data == nil {
+		data.Warning = []string{
+			fmt.Sprintf("no qualfiying markdown found in repo %s please verify any markdown has a title field in frontmatter", repo),
+		}
+	}
+
+	// tmp, _ := json.Marshal(data)
+	// log.Println(string(tmp))
 
 	return data
 }

@@ -35,6 +35,8 @@ func (e *GitExtractor) Extract(ctx context.Context, repoUrl string) (*model.Repo
 	if err != nil {
 		return nil, err
 	}
+	// tmp, _ := json.Marshal(files)
+	// log.Println(string(tmp))
 
 	// adapt data to repo object for consumer return
 	repo := e.repoAdapter(repoUrl, files)

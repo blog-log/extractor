@@ -1,2 +1,5 @@
 .env
 k8s/secret.yaml
+test
+
+test/dist

@@ -24,3 +24,5 @@
 .env.*
 
 k8s/*secret*.yaml
+
+test/dist
