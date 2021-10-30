@@ -30,8 +30,5 @@ func GitRepoAdapter(repo string, files []*model.File) *model.Repo {
 		}
 	}
 
-	// tmp, _ := json.Marshal(data)
-	// log.Println(string(tmp))
-
 	return data
 }

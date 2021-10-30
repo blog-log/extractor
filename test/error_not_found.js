@@ -5,8 +5,8 @@ const BASE_URL = "http://localhost:8080"
 
 export const options = {
     vus: 3,
-    duration: '2s',
-    httpDebug: 'full',
+    duration: '10s',
+    // httpDebug: 'full',
 
     thresholds: {
         http_req_duration: ['p(99)<1500'], // 99% of requests must complete below 1.5s
